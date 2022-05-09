@@ -13,6 +13,9 @@ const isValid = function (value) {
     return true
 }
 
+const isValidTitle = function (title) {
+    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
+}
 
 
 //Create author.....................................................................
@@ -20,31 +23,46 @@ const createUser = async function (req, res) {
     try {
 
         let data = req.body;
-        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please Provide Valid Input Detailsr" }) }
+        if (Object.keys(data).length == 0) { 
+            return res.status(400).send({ status: false, message: "Please Provide Valid Input Detailsr" }) 
+        }
 
         if (!isValid(data.title)) { return res.status(400).send({ status: false, message: "Title must be:['Mr', 'Mrs', 'Miss'] " }) }
+        if(!isValidTitle(data.title)) {
+            return res.status(400).send({status:"false",message:"invalid title"})
+    }
 
-
-        if (!isValid(data.name)) { return res.status(400).send({ status: false, message: "Name is required" }) }
-        if (!isValid(data.phone)) { return res.status(400).send({ status: false, message: "Phone Number is required" }) }
+        if (!isValid(data.name)) {
+             return res.status(400).send({ status: false, message: "Name is required" }) 
+            }
+        if (!isValid(data.phone)) { 
+            return res.status(400).send({ status: false, message: "Phone Number is required" }) 
+        }
 
 
         if (!(/^[6-9]\d{9}$/.test(data.phone))) {
             return res.status(400).send({ status: false, message: "phone number should be valid number" })
         }
 
-        if (!isValid(data.email)) { return res.status(400).send({ status: false, message: "Email-Id is required" }) }
+        if (!isValid(data.email)) { 
+            return res.status(400).send({ status: false, message: "Email-Id is required" }) 
+        }
 
         if  (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(data.email))) {
             return res.status(400).send({ status: false, message: "Email should be a valid email address" })
         }
         //---------------------------check email duplicacy---------------------------------------//
         let checkEmail = await userModel.findOne({ email: data.email })
-        if (checkEmail) { return res.status(400).send({ message: "Email Already exist" }) }
+        if (checkEmail) { 
+
+            return res.status(400).send({ message: "Email Already exist" }) 
+        }
 
         //---------------------------check phone duplicacy---------------------------------------//
         let checkPhone = await userModel.findOne({ phone: data.phone })
-        if (checkPhone) { return res.status(400).send({ message: "phone Already exist" }) }
+        if (checkPhone) {
+             return res.status(400).send({ message: "phone Already exist" }) 
+            }
 
         if (!isValid(data.password)) {
             return res.status(400).send({ status: false, message: "Password is required" })
