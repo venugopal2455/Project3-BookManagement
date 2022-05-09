@@ -23,8 +23,8 @@ const reviewSchema = new mongoose.Schema({
     },
     rating:{
         type:Number,
-        minimumLength:1,
-        maximumLength:8,
+        min:1,
+        max:5,
         required:true,
 
     },
