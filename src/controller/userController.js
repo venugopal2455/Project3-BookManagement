@@ -68,13 +68,8 @@ const createUser = async function (req, res) {
     }
 }
 
+//=================================================loginUser=========================================
 
-
-
-
-const isValidTitle = function (title) {
-    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
-}
 
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
@@ -121,7 +116,7 @@ const loginUser = async function (req, res) {
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60
         }, 'somesecureprivatekey')
-        res.header('x-api-key', token)
+        res.header('x-user-key', token)
         res.status(200).send({ status: true, message: "User successfully logged in", data: token })
     }
 
@@ -130,5 +125,6 @@ const loginUser = async function (req, res) {
 
     }
 }
+
 module.exports.createUser = createUser;
 module.exports.loginUser=loginUser;
