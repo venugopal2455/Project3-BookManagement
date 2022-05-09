@@ -78,6 +78,8 @@ const isValidRequestBody = function (requestBody) {
 const loginUser = async function (req, res) {
     try {
         const requestBody = req.body;
+     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+     let regex1 = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/
         if (!isValidRequestBody(requestBody)) {
             res.status(500).send({ status: false, message: "Invalid request parameters please provide login details" })
             return
@@ -89,7 +91,7 @@ const loginUser = async function (req, res) {
             return
         }
 
-        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.match(email))) {
+        if (!regex.test(email)) {
             res.status(400).send({ status: false, message: "Email should be a valid email address" })
             return
         }
@@ -100,7 +102,7 @@ const loginUser = async function (req, res) {
         }
         // const valid = password.length;
         // if (!(valid >= 8 && valid <= 15)) return res.status(400).send({ status: false, message: "Please Enter valid Password" });
-        if (!(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.match(password))) {
+        if (!regex1.test(password)) {
             res.status(400).send({ status: false, message: "password is invalid" })
             return
         }
