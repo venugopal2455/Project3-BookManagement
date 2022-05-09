@@ -29,7 +29,7 @@ const loginUser = async function (req, res) {
             return
         }
 
-        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
+        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.match(email))) {
             res.status(400).send({ status: false, message: "Email should be a valid email address" })
             return
         }
@@ -38,8 +38,12 @@ const loginUser = async function (req, res) {
             res.status(400).send({ status: false, message: "password is required" })
             return
         }
-
-     
+        // const valid = password.length;
+        // if (!(valid >= 8 && valid <= 15)) return res.status(400).send({ status: false, message: "Please Enter valid Password" });
+        if (!(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.match(password))) {
+            res.status(400).send({ status: false, message: "password is invalid" })
+            return
+        }
 
         const user = await userModel.findOne({ email, password });
         if (!user) {
@@ -53,7 +57,7 @@ const loginUser = async function (req, res) {
             exp: Math.floor(Date.now() / 1000) + 10 * 60 * 60
         }, 'somesecureprivatekey')
         res.header('x-api-key', token)
-        res.status(200).send({ status: true, message: "User login successfull", data: token })
+        res.status(200).send({ status: true, message: "User successfully logged in", data: token })
     }
 
     catch (error) {
