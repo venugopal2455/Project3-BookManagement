@@ -1,5 +1,6 @@
 const bookModel = require("../models/bookModel")
 const userModel = require("../models/userModel")
+const reviewModel = require("../models/reviewModel")
 const mongoose=require('mongoose')
 
 const isValidRequestBody = function(requestBody){
@@ -72,4 +73,43 @@ const bookCreation = async function(req,res){
     }
 }
 
-module.exports = {bookCreation}
+
+const getBookById = async function (req, res){
+    try{
+         let bookid = req.params.bookId
+ 
+ if(!isValid(bookid)) 
+      {
+         return res.status(400).send({ status: false, message: "bookid is required" }) 
+        }
+ 
+ if(!isValidObjectId(bookid))
+ {
+     return res.status(400).send({ status: false, message: "bookid is not a valid objectId" }) 
+ }
+ 
+ let book = await bookModel.findOne({_id:bookid})
+ if(!book) {
+     return res.status(404).send({status:false, message:"no such book is available "})
+ }
+ if(book.isDeleted==true){
+     return res.status(404).send({status:false, message:"book not found "})
+ }
+ 
+ let review1 = await reviewModel.find({bookId:book._id})
+//  if(review.length==0) {
+//      return res.status(400).send({status:false, message:"there is no review of this book"})
+//  }
+let getlist = {_id:book._id,title:book.title, userId:book.userId, category: book.category,subcategory:book.subcategory,isDeleted:book.isDeleted,reviews:book.reviews, deletedAt:book.deletedAt, releaseAt:book.releaseAt,createdAt:book.createdAt,updatedAt:book.updatedAt, review:review1 }
+ return res.status(200).send({status:true, message:"Book list", data:getlist})
+ 
+    }
+    catch (error) {
+     res.status(500).send({ status: false, msg: error.message })
+ }
+ }
+ 
+ 
+ 
+ 
+module.exports = {bookCreation, getBookById}

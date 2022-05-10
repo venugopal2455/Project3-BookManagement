@@ -9,7 +9,7 @@ router.post('/register',userController.createUser);
 router.post('/login',userController.loginUser);
 router.post('/books',bookController.bookCreation);
 router.post('/books/:bookId/review',reviewController.bookReview)
-
+router.get("/books/:bookId", bookController.getBookById)
 
 
 
