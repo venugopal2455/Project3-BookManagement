@@ -13,9 +13,7 @@ const isValid = function (value) {
     return true
 }
 
-const isValidTitle = function (title) {
-    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
-}
+
 
 
 //Create author.....................................................................
@@ -23,21 +21,18 @@ const createUser = async function (req, res) {
     try {
 
         let data = req.body;
-        if (Object.keys(data).length == 0) { 
-            return res.status(400).send({ status: false, message: "Please Provide Valid Input Detailsr" }) 
+        if (Object.keys(data).length == 0) {
+            return res.status(400).send({ status: false, message: "Please Provide Valid Input Details" })
         }
 
         if (!isValid(data.title)) { return res.status(400).send({ status: false, message: "Title must be:['Mr', 'Mrs', 'Miss'] " }) }
-        if (["Mr", "Mrs", "Miss"].indexOf(data.title) == -1) return res.status(400).send({status: false,data: "Enter a valid title Mr or Mrs or Miss ",});
-        if(!isValidTitle(data.title)) {
-            return res.status(400).send({status:"false",message:"invalid title"})
-    }
+        if (["Mr", "Mrs", "Miss"].indexOf(data.title) == -1) return res.status(400).send({ status: false, data: "Enter a valid title Mr or Mrs or Miss ", });
 
         if (!isValid(data.name)) {
-             return res.status(400).send({ status: false, message: "Name is required" }) 
-            }
-        if (!isValid(data.phone)) { 
-            return res.status(400).send({ status: false, message: "Phone Number is required" }) 
+            return res.status(400).send({ status: false, message: "Name is required" })
+        }
+        if (!isValid(data.phone)) {
+            return res.status(400).send({ status: false, message: "Phone Number is required" })
         }
 
 
@@ -46,25 +41,22 @@ const createUser = async function (req, res) {
         }
 
         if (!isValid(data.email)) { return res.status(400).send({ status: false, message: "email id is required" }) }
-        if (!isValid(data.email)) { 
-            return res.status(400).send({ status: false, message: "Email-Id is required" }) 
-        }
 
-        if  (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(data.email))) {
+        if (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(data.email))) {
             return res.status(400).send({ status: false, message: "Email should be a valid email address" })
         }
         //---------------------------check email duplicacy---------------------------------------//
         let checkEmail = await userModel.findOne({ email: data.email })
-        if (checkEmail) { 
+        if (checkEmail) {
 
-            return res.status(400).send({ message: "Email Already exist" }) 
+            return res.status(400).send({ message: "Email Already exist" })
         }
 
         //---------------------------check phone duplicacy---------------------------------------//
         let checkPhone = await userModel.findOne({ phone: data.phone })
         if (checkPhone) {
-             return res.status(400).send({ message: "phone Already exist" }) 
-            }
+            return res.status(400).send({ message: "phone Already exist" })
+        }
 
         if (!isValid(data.password)) {
             return res.status(400).send({ status: false, message: "Password is required" })
@@ -80,7 +72,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "cityName is required" })
         }
 
-        if (!(/^[1-9]\d{5}$/.test(data.address.pincode))){
+        if (!(/^[1-9]\d{5}$/.test(data.address.pincode))) {
             return res.status(400).send({ status: false, message: "Please enter valid Pincode" })
         }
 
@@ -110,8 +102,8 @@ const isValidRequestBody = function (requestBody) {
 const loginUser = async function (req, res) {
     try {
         const requestBody = req.body;
-     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-     let regex1 = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/
+        let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        let regex1 = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/
         if (!isValidRequestBody(requestBody)) {
             res.status(400).send({ status: false, message: "Invalid request parameters please provide login details" })
             return
@@ -161,4 +153,4 @@ const loginUser = async function (req, res) {
 }
 
 module.exports.createUser = createUser;
-module.exports.loginUser=loginUser;
+module.exports.loginUser = loginUser;
