@@ -85,15 +85,13 @@ const getBookById = async function (req, res) {
             return res.status(400).send({ status: false, message: "bookid is not a valid objectId" })
         }
 
-        let book = await bookModel.findOne({ _id: bookid })
+        let book = await bookModel.findOne({ _id: bookid, isDeleted:false })
         if (!book) {
             return res.status(404).send({ status: false, message: "no such book is available " })
         }
-        if (book.isDeleted == true) {
-            return res.status(404).send({ status: false, message: "book not found " })
-        }
-       
-        let review1 = await reviewModel.find({ bookId: book._id, isDeleted:false}).select({_id:1,bookId:1,reviewedBy:1,reviewedAt:1,rating:1,review:1})
+        
+
+        let review1 = await reviewModel.find({ bookId: book._id, isDeleted: false }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
         //  if(review.length==0) {
         //      return res.status(400).send({status:false, message:"there is no review of this book"})
         //  }
