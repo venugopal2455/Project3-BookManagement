@@ -107,7 +107,7 @@ const getBookById = async function (req, res) {
             isDeleted: book.isDeleted,
             reviews: book.reviews,
             deletedAt: book.deletedAt,
-            releaseAt: book.releaseAt,
+            releasedAt: book.releaseAt,
             createdAt: book.createdAt,
             updatedAt: book.updatedAt,
             reviewsData: review1
