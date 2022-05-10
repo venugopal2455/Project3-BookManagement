@@ -1,10 +1,6 @@
 const userModel = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 
-
-
-
-
 //validation.....................................................................
 const isValid = function (value) {
     if (typeof value == undefined || value == null) return false
@@ -12,7 +8,6 @@ const isValid = function (value) {
     if (typeof value === 'Number' && value.toString().trim().length === 0) return false
     return true
 }
-
 
 
 
