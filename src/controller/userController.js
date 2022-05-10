@@ -23,6 +23,7 @@ const createUser = async function (req, res) {
         if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please Provide Valid Input Detailsr" }) }
 
         if (!isValid(data.title)) { return res.status(400).send({ status: false, message: "Title must be:['Mr', 'Mrs', 'Miss'] " }) }
+        if (["Mr", "Mrs", "Miss"].indexOf(data.title) == -1) return res.status(400).send({status: false,data: "Enter a valid title Mr or Mrs or Miss ",});
 
 
         if (!isValid(data.name)) { return res.status(400).send({ status: false, message: "Name is required" }) }
@@ -33,7 +34,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "phone number should be valid number" })
         }
 
-        if (!isValid(data.email)) { return res.status(400).send({ status: false, message: "Email-Id is required" }) }
+        if (!isValid(data.email)) { return res.status(400).send({ status: false, message: "email id is required" }) }
 
         if  (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(data.email))) {
             return res.status(400).send({ status: false, message: "Email should be a valid email address" })
@@ -52,6 +53,12 @@ const createUser = async function (req, res) {
 
         if (!(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/.test(data.password))) {
             return res.status(400).send({ status: false, message: "Password need minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character" })
+        }
+        if (!isValid(data.address.street)) {
+            return res.status(400).send({ status: false, message: "streetName is required" })
+        }
+        if (!isValid(data.address.city)) {
+            return res.status(400).send({ status: false, message: "cityName is required" })
         }
 
         if (!(/^[1-9]\d{5}$/.test(data.address.pincode))){
@@ -72,9 +79,9 @@ const createUser = async function (req, res) {
 
 
 
-const isValidTitle = function (title) {
-    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
-}
+// const isValidTitle = function (title) {
+//     return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
+// }
 
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
@@ -84,7 +91,7 @@ const loginUser = async function (req, res) {
     try {
         const requestBody = req.body;
         if (!isValidRequestBody(requestBody)) {
-            res.status(500).send({ status: false, message: "Invalid request parameters please provide login details" })
+            res.status(400).send({ status: false, message: "Invalid request parameters please provide login details" })
             return
         }
 
