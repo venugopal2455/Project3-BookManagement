@@ -75,12 +75,63 @@ const bookReview = async function(req,res){
 
 
 const updateReview = async function(req, res){
-    let bookid = req.params.BookId
+  try{
+        let bookid = req.params.bookId
     let reviewid= req.params.reviewId
+    if(!isValid(bookid)) {
+        return res.status(400).send({status:false,message:"please enter bookid"})
+    }
+if(!isValidObjectId(bookid)) {
+    return res.status(400).send({status:false,message:"please enter a valid bookid"})
+    }
+    if(!isValid(reviewid)) {
+        return res.status(400).send({status:false,message:"please enter reviewid"})
+    }
+if(!isValidObjectId(reviewid)) {
+    return res.status(400).send({status:false,message:"please enter a valid reviewid"})
+    }
+let book = await bookModel.findOne({_id:bookid})
+if(!book){
+    return res.status(404).send({status:false,message:"No such book"})
 }
 
+if(book.isDeleted==true){
+    return res.status(404).send({status:false,message:"Book not found"})
+}
 
+let reviews = await reviewModel.findOne({_id:reviewid})
+if(!reviews){
+    return res.status(404).send({status:false,message:"No such review for this book"})
+}
 
+if(reviews.isDeleted==true){
+    return res.status(404).send({status:false,message:"There is no review"})
+}
+
+let info = req.body
+if(!isValidRequestBody(info)){
+    return res.status(400).send({status:false, message:"please enter details"})
+}
+
+if(!isValid(info.review)){
+    return res.status(400).send({status:false, message:"please enter review details"})
+}
+
+if(!isValid(info.rating)){
+    return res.status(400).send({status:false, message:"please enter rating details"})
+}
+if(!isValid(info.reviewedBy)){
+    return res.status(400).send({status:false, message:"please enter reviewedBy details"})
+}
+
+let update = await reviewModel.findOneAndUpdate({bookId:bookid},{$set:{review:info.review, rating:info.rating, reviewedBy:info.reviewedBy}},{new:true})
+return res.status(200).send({status:true, message:"Update successfully", data:update})
+}
+catch(err){
+    console.log(err.message)
+    res.status(500).send({status:false, msg:err.message})
+}
+}
 
 
 module.exports = {bookReview,updateReview}
