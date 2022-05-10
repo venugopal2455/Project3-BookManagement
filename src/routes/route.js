@@ -10,7 +10,7 @@ router.post('/login',userController.loginUser);
 router.post('/books',bookController.bookCreation);
 router.post('/books/:bookId/review',reviewController.bookReview)
 router.get("/books/:bookId", bookController.getBookById)
-
+router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
 
 
 module.exports = router
