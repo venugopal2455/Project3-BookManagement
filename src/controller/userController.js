@@ -1,10 +1,6 @@
 const userModel = require("../models/userModel")
 const jwt = require("jsonwebtoken")
 
-
-
-
-
 //validation.....................................................................
 const isValid = function (value) {
     if (typeof value == undefined || value == null) return false
@@ -16,7 +12,6 @@ const isValid = function (value) {
 const isValidTitle = function (title) {
     return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
 }
-
 
 //Create author.....................................................................
 const createUser = async function (req, res) {
