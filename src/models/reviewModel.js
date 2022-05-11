@@ -21,7 +21,7 @@ const reviewSchema = new mongoose.Schema({
         type:Date,
         default:new Date(),
         required:true,
-        trim:true
+        
     },
     rating:{
         type:Number,
