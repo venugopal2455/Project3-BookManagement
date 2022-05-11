@@ -76,10 +76,10 @@ const bookCreation = async function (req, res) {
 const getBookById = async function (req, res) {
     try {
         let bookid = req.params.bookId
-
-        if (!isValid(bookid)) {
-            return res.status(400).send({ status: false, message: "bookid is required" })
-        }
+        
+        // if (!isValidObjectId(bookid)) {
+        //     return res.status(400).send({ status: false, message: "bookid is required" })
+        // }
 
         if (!isValidObjectId(bookid)) {
             return res.status(400).send({ status: false, message: "bookid is not a valid objectId" })

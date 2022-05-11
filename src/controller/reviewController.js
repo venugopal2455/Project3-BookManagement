@@ -83,27 +83,27 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, message: "please enter a valid bookid" })
         }
 
-        let book = await bookModel.findOne({ _id: bookid })
+        let book = await bookModel.findOne({ _id: bookid , isDeleted:false})
         if (!book) {
             return res.status(404).send({ status: false, message: "No such book" })
         }
 
-        if (book.isDeleted == true) {
-            return res.status(404).send({ status: false, message: "Book not found" })
-        }
+        // if (book.isDeleted == true) {
+        //     return res.status(404).send({ status: false, message: "Book not found" })
+        // }
 
         if (!isValidObjectId(review_id)) {
             return res.status(400).send({ status: false, message: "please enter a valid review_i" })
         }
 
-        let reviews = await reviewModel.findById(review_id)
+        let reviews = await reviewModel.findOne({_id:review_id, isDeleted:false})
         if (!reviews) {
             return res.status(404).send({ status: false, message: "No such review for this book" })
         }
 
-        if (reviews.isDeleted == true) {
-            return res.status(404).send({ status: false, message: "There is no review" })
-        }
+        // if (reviews.isDeleted == true) {
+        //     return res.status(404).send({ status: false, message: "There is no review" })
+        // }
 
         let info = req.body
         if (!isValidRequestBody(info)) {
@@ -117,14 +117,17 @@ const updateReview = async function (req, res) {
         if (!isValid(info.rating)) {
             return res.status(400).send({ status: false, message: "please enter rating details" })
         }
+        if(info.rating <= 5 && info.rating >= 1){
 
+         return res.status(400).send({ status: false, message: "you can not give rating greater than 5 or less than 1" })
+        }
         // we have to write regex for rating after validating rating.
         if (!isValid(info.reviewedBy)) {
             return res.status(400).send({ status: false, message: "please enter reviewedBy details" })
         }
 
         let update = await reviewModel.findOneAndUpdate({ _id: review_id, }, { $set: { review: info.review, rating: info.rating, reviewedBy: info.reviewedBy } }, { new: true })
-        return res.status(200).send({ status: true, message: "Update successfully", data: update })
+        return res.status(200).send({ status: true, message: "Updated successfully", data: update })
     }
     catch (err) {
         console.log(err.message)
