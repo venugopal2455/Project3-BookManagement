@@ -47,6 +47,7 @@ const bookSchema = new mongoose.Schema({
       type:String,
     required:true,
     
+    // default:new Date()
 }
 },{timestamps:true});
 
