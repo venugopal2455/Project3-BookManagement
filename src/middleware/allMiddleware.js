@@ -34,13 +34,13 @@ const authorization1 = async function(req,res,next){
     try{
         let bookId = req.params.bookId;
         let id = req.userId;
+        if(!isValidObjectId(bookId)){
+            return res.status(400).send({ status: false, msg: "Please enter valid bookId" })
+         }
         let book = await bookModel.findById(bookId);
         if(!book){
             return res.status(404).send({ status: false, message: "No such book" }) 
         }
-     if(!isValidObjectId(bookId)){
-        return res.status(400).send({ status: false, msg: "Please enter valid bookId" })
-     }
         if(id != book.userId){
             return res.status(403).send({status: false , msg : "Not authorized..!" });
         }
