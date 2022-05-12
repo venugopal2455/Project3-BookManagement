@@ -102,9 +102,7 @@ const getBookById = async function (req, res) {
     try {
         let bookid = req.params.bookId
         
-        // if (!isValidObjectId(bookid)) {
-        //     return res.status(400).send({ status: false, message: "bookid is required" })
-        // }
+        
 
         if (!isValidObjectId(bookid)) {
             return res.status(400).send({ status: false, message: "bookid is not a valid objectId" })
@@ -118,11 +116,8 @@ const getBookById = async function (req, res) {
             return res.status(404).send({ status: false, message: "book not found " })
         }
         
-
         let review1 = await reviewModel.find({ bookId: book._id, isDeleted: false }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
-        //  if(review.length==0) {
-        //      return res.status(400).send({status:false, message:"there is no review of this book"})
-        //  }
+       
         let getlist =
         {
             _id: book._id,
@@ -261,7 +256,6 @@ const deleteBook = async function (req, res) {
 
 
 
-module.exports = { bookCreation, getBookById }
-module.exports.updateBooks = updateBooks;
-module.exports.deleteBook = deleteBook;
-module.exports = { bookCreation, getBookById, getBooks}
+
+
+module.exports = { bookCreation, getBookById, getBooks,updateBooks,deleteBook}

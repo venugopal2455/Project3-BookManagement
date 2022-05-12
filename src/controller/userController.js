@@ -11,7 +11,7 @@ const isValid = function (value) {
 
 
 
-//Create author.....................................................................
+//Create User.....................................................................
 const createUser = async function (req, res) {
     try {
 
@@ -83,13 +83,6 @@ const createUser = async function (req, res) {
 
 //=================================================loginUser=========================================
 
-
-
-
-// const isValidTitle = function (title) {
-//     return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
-// }
-
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
 }
@@ -147,9 +140,6 @@ const loginUser = async function (req, res) {
     }
 }
 
+module.exports = {createUser,loginUser}
 
- 
-
-module.exports.createUser = createUser;
-module.exports.loginUser = loginUser;
 

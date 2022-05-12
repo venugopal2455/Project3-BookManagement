@@ -73,7 +73,7 @@ const bookReview = async function (req, res) {
     }
 }
 
-
+//=================================updateReview=======================================================================
 const updateReview = async function (req, res) {
     try {
         let bookid = req.params.bookId
@@ -88,10 +88,6 @@ const updateReview = async function (req, res) {
             return res.status(404).send({ status: false, message: "No such book" })
         }
 
-        // if (book.isDeleted == true) {
-        //     return res.status(404).send({ status: false, message: "Book not found" })
-        // }
-
         if (!isValidObjectId(review_id)) {
             return res.status(400).send({ status: false, message: "please enter a valid review_i" })
         }
@@ -100,10 +96,6 @@ const updateReview = async function (req, res) {
         if (!reviews) {
             return res.status(404).send({ status: false, message: "No such review for this book" })
         }
-
-        // if (reviews.isDeleted == true) {
-        //     return res.status(404).send({ status: false, message: "There is no review" })
-        // }
 
         let info = req.body
         if (!isValidRequestBody(info)) {
