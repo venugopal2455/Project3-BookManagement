@@ -108,7 +108,7 @@ const getBookById = async function (req, res) {
             return res.status(400).send({ status: false, message: "bookid is not a valid objectId" })
         }
 
-        let book = await bookModel.findOne({ _id: bookid, isDeleted:false })
+        let book = await bookModel.findOne({ _id: bookid, isDeleted:false }).lean()
         if (!book) {
             return res.status(404).send({ status: false, message: "no such book is available " })
         }
@@ -118,23 +118,23 @@ const getBookById = async function (req, res) {
         
         let review1 = await reviewModel.find({ bookId: book._id, isDeleted: false }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
        
-        let getlist =
-        {
-            _id: book._id,
-            title: book.title,
-            userId: book.userId,
-            category: book.category,
-            subcategory: book.subcategory,
-            isDeleted: book.isDeleted,
-            reviews: book.reviews,
-            deletedAt: book.deletedAt,
-            releasedAt: book.releaseAt,
-            createdAt: book.createdAt,
-            updatedAt: book.updatedAt,
-            reviewsData: review1
-        }
-
-        return res.status(200).send({ status: true, message: "Books list", data: getlist })
+        // let getlist =
+        // {
+        //     _id: book._id,
+        //     title: book.title,
+        //     userId: book.userId,
+        //     category: book.category,
+        //     subcategory: book.subcategory,
+        //     isDeleted: book.isDeleted,
+        //     reviews: book.reviews,
+        //     deletedAt: book.deletedAt,
+        //     releasedAt: book.releaseAt,
+        //     createdAt: book.createdAt,
+        //     updatedAt: book.updatedAt,
+        //     reviewsData: review1
+        // }
+        book.reviewsData =review1
+        return res.status(200).send({ status: true, message: "Books list", data: book })
 
     }
     catch (error) {

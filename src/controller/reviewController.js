@@ -19,7 +19,7 @@ const isValidObjectId = function (objectId) {
 }
 
 
-// =================================================post review===================================
+// =================================================postreview======================================
 const bookReview = async function (req, res) {
     try {
         let paramBookId = req.params.bookId
@@ -42,7 +42,7 @@ const bookReview = async function (req, res) {
         //if bookid and params bookid is same different
         if (paramBookId === bookId) {
             let bookData = details.bookId
-
+            console.log(bookData)
             let BookId = await bookModel.findById(bookData)
             // if book is deleted then return this
             if (BookId.isDeleted)
@@ -64,24 +64,21 @@ const bookReview = async function (req, res) {
         if (!review)
             return res.status(400).send({ status: false, msg: 'review is required' })
 
-        //creation of review
-        // let reviewCreation = await reviewModel.create(details)
-        // res.status(201).send({ status: true, message: "reviewcreated successfully", data: reviewCreation })
-        let reviewCount= await bookModel.findOneAndUpdate({_id: paramBookId}, {$inc: {reviews: 1}}, {new: true})
+        let reviewCount= await bookModel.findOneAndUpdate({_id: paramBookId}, {$inc: {reviews: 1}}, {new: true}).lean()
        
-        details.bookId = reviewCount._id;
         details.reviewedAt = new Date()
        
         let Review = await reviewModel.create(details)
         
         let reviewCreation = await reviewModel.findOne({ id: Review._id }).select({_v:0,createdAt: 0, updatedAt: 0, isDeleted: 0 })
-        return res.status(201).send({ status: true,message: "reviewcreated successfully", data: reviewCreation})
+        reviewCount.reviewsData = reviewCreation
+        return res.status(201).send({ status: true,message: "reviewcreated successfully", data: reviewCount})
     }
     catch (err) {
         console.log(err.message)
         res.status(500).send({ status: false, msg: err.message })
     }}
-//=================================updateReview=======================================================================
+//=================================updateReview=========================================================
 const updateReview = async function (req, res) {
     try {
         let bookid = req.params.bookId
