@@ -133,4 +133,43 @@ const updateReview = async function (req, res) {
 }
 
 
-module.exports = { bookReview, updateReview }
+const deleteReview = async function(req, res){
+    try{
+        let bookid = req.params.bookId
+        let reviewid = req.params.reviewId
+        //Validate book id
+        if((!isValidObjectId(bookid))) {
+            return res.status(400).send({status: false, msg: "BookId not valid"})
+        }
+        //Validate review id
+        if(!isValidObjectId(reviewid)) {
+            return res.status(400).send({status: false, msg: "review not valid"})
+        }
+         let book = await bookModel.findOne({_id: bookid, isDeleted: false})
+        if(!book) {
+            return res.status(404).send({status: false, msg: "BookId doesnot exist that means book is deleted"})
+        }
+        let Review = await reviewModel.findOne({_id: reviewid, isDeleted: false})
+        if(!Review) {
+            return res.status(404).send({status: false, msg: "reviewId doesnot exist that means review is deleted"})
+        }
+      
+        let deleteReview = await reviewModel.findOneAndUpdate({_id: reviewid,bookId:bookid, isDeleted: false}, {isDeleted: true})
+        if(!deleteReview) return res.status(400).send({status:false,msg:"make sure that reviewId is belong to that bookid"})
+        if(deleteReview) {
+            let deletedData = await bookModel.findOneAndUpdate({ _id: bookid}, {$inc: {reviews: -1}},{new:true})
+            return res.status(200).send({status: true, msg: "Review is deleted successfully"})
+        }        
+        else {
+            return res.status(400).send({status: false, msg: "Review not exist"})
+        }
+
+    }
+    catch (err) {
+        console.log("This is the error :", err.message);
+        return res.status(500).send({ msg: "Error", error: err.message });
+    }
+}
+
+
+module.exports = { bookReview, updateReview,deleteReview }
