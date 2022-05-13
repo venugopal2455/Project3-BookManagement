@@ -35,10 +35,7 @@ const bookReview = async function (req, res) {
         if (!isValid(paramBookId)) return res.status(400).send({ status: false, msg: "bookId is Required" })
         if (!isValidObjectId(paramBookId))return res.status(400).send({ status: false, msg: "Please enter valid BookId" })
          let BookId = await bookModel.findById(paramBookId)
-           // if book is deleted then return this
-        if (BookId.isDeleted) return res.status(400).send({ status: false, message: "this book is deleted" })
-            //if its book not deleted then it is return this
-        if (!BookId) return res.status(400).send({ status: false, msg: `${BookId} this bookid is not correct` })
+        if (!BookId) return res.status(404).send({ status: false, msg: "Book not foundt" })
          //checking for rating
         if(!isValid(rating)) return res.status(400).send({status:false,msg:'rating needed'})
         if (!(/[+]?([0-4]*\.[0-9]+|[0-5])/).test(details.rating))

@@ -49,8 +49,13 @@ const bookCreation = async function (req, res) {
         if (!UserId)
             return res.status(400).send({ status: false, msg:`${userId} this userid is not correct` })
         //Isbn is not present in the body 
-        if (!ISBN)
+        if (!ISBN){
             return res.status(400).send({ status: false, msg: "ISBN is required" })
+        }
+        // valid ISBN===================
+            if (!(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(ISBN))) {
+                return res.status(400).send({ status: false, ERROR: "ISBN is not valid" })
+            }
         //uniqueISBN checking from bookmodel
         let uniqueISBN = await bookModel.findOne({ ISBN })
         if (uniqueISBN)
@@ -61,7 +66,8 @@ const bookCreation = async function (req, res) {
         // subcategory is not present in the body
         if (!subcategory)
             return res.status(400).send({ status: false, msg: 'subcategory is required' })
-
+            // new Date("details.releaseAt"); 
+            // var dateString = new Date(date. getTime() - (date. getTimezoneOffset() * 60000 ))
         //creation of book with everything is working fine
         let bookCreation = await bookModel.create(details)
         return res.status(201).send({ status: true, message: "bookcreated successfully", data: bookCreation })
@@ -71,6 +77,8 @@ const bookCreation = async function (req, res) {
          res.status(500).send({ status: false, msg: err.message })
     }
 }
+
+
 
 const getBooks = async function (req, res) {
     try {
