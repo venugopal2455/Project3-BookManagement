@@ -66,7 +66,6 @@ const updateReview = async function (req, res) {
         if (!isValidObjectId(bookid)) {
             return res.status(400).send({ status: false, message: "please enter a valid bookid" })
         }
-
         let book = await bookModel.findOne({ _id: bookid , isDeleted:false}).lean()
         if (!book) {
             return res.status(404).send({ status: false, message: "No such book" })
@@ -99,7 +98,6 @@ const updateReview = async function (req, res) {
         if (!isValid(info.reviewedBy)) {
             return res.status(400).send({ status: false, message: "please enter reviewedBy details" })
         }
-
         let update = await reviewModel.findOneAndUpdate({ _id: review_id, }, { $set: { review: info.review, rating: info.rating, reviewedBy: info.reviewedBy } }, { new: true })
         book.reviewsData=update
         return res.status(200).send({ status: true, message: "Updated successfully", data: book })
@@ -145,7 +143,7 @@ const deleteReview = async function(req, res){
     }
     catch (err) {
         console.log("This is the error :", err.message);
-        return res.status(500).send({ msg: "Error", error: err.message });
+        res.status(500).send({ msg: "Error", error: err.message });
     }
 }
 
