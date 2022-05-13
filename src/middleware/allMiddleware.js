@@ -37,7 +37,7 @@ const authorization1 = async function(req,res,next){
         if(!isValidObjectId(bookId)){
             return res.status(400).send({ status: false, msg: "Please enter valid bookId" })
          }
-        let book = await bookModel.findById(bookId);
+        let book = await bookModel.findOne({_id:bookId, isDeleted:false});
         if(!book){
             return res.status(404).send({ status: false, message: "No such book" }) 
         }

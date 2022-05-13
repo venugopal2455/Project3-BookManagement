@@ -29,48 +29,28 @@ const bookReview = async function (req, res) {
         if (!isValidRequestBody(details))
             return res.status(400).send({ status: false, msg: "Please fill body details" })
         //body consists of which is required
-        let { bookId, reviewedBy, rating, review } = details
-
+        let {rating, review } = details
+        details.bookId=paramBookId
         //validation start
-        if (!isValid(paramBookId)) return res.status.send({ status: false, msg: "please enter bookId in params" })
-        if (!isValid(bookId))
-            return res.status(400).send({ status: false, msg: "bookId is Required" })
-        if (!isValidObjectId(bookId))
-            return res.status(400).send({ status: false, msg: "Please enter valid BookId" })
-
-        //checking for UniqueBookId
-        //if bookid and params bookid is same different
-        if (paramBookId === bookId) {
-            let bookData = details.bookId
-            console.log(bookData)
-            let BookId = await bookModel.findById(bookData)
-            // if book is deleted then return this
-            if (BookId.isDeleted)
-                return res.status(400).send({ status: false, message: "this book is deleted" })
+        if (!isValid(paramBookId)) return res.status(400).send({ status: false, msg: "bookId is Required" })
+        if (!isValidObjectId(paramBookId))return res.status(400).send({ status: false, msg: "Please enter valid BookId" })
+         let BookId = await bookModel.findById(paramBookId)
+           // if book is deleted then return this
+        if (BookId.isDeleted) return res.status(400).send({ status: false, message: "this book is deleted" })
             //if its book not deleted then it is return this
-            if (!BookId)
-                return res.status(400).send({ status: false, msg: `${bookId} this bookid is not correct` })
-        }
-        else {
-            return res.status(400).send({ status: false, msg: "both bookid's are different" })
-        }
-        //checking for reviewedBy
-        if (!reviewedBy)
-            return res.status(400).send({ status: false, msg: "reviewed by is required" })
-        //checking for rating
-        if (!rating)
-            return res.status(400).send({ status: false, msg: 'rating is needed' })
+        if (!BookId) return res.status(400).send({ status: false, msg: `${BookId} this bookid is not correct` })
+         //checking for rating
+        if(!isValid(rating)) return res.status(400).send({status:false,msg:'rating needed'})
+        if (!(/[+]?([0-4]*\.[0-9]+|[0-5])/).test(details.rating))
+            return res.status(400).send({ status: false, msg: 'rating is needed between 1 to 5' })
         //checking for review
-        if (!review)
+        if (!isValid(review))
             return res.status(400).send({ status: false, msg: 'review is required' })
-
+        //creation of review
         let reviewCount= await bookModel.findOneAndUpdate({_id: paramBookId}, {$inc: {reviews: 1}}, {new: true}).lean()
-       
         details.reviewedAt = new Date()
-       
         let Review = await reviewModel.create(details)
-        
-        let reviewCreation = await reviewModel.findOne({ id: Review._id }).select({_v:0,createdAt: 0, updatedAt: 0, isDeleted: 0 })
+        let reviewCreation = await reviewModel.findOne({_id: Review._id }).select({_v:0,createdAt: 0, updatedAt: 0, isDeleted: 0 })
         reviewCount.reviewsData = reviewCreation
         return res.status(201).send({ status: true,message: "reviewcreated successfully", data: reviewCount})
     }
@@ -83,12 +63,11 @@ const updateReview = async function (req, res) {
     try {
         let bookid = req.params.bookId
         let review_id = req.params.reviewId
-        console.log(review_id)
         if (!isValidObjectId(bookid)) {
             return res.status(400).send({ status: false, message: "please enter a valid bookid" })
         }
 
-        let book = await bookModel.findOne({ _id: bookid , isDeleted:false})
+        let book = await bookModel.findOne({ _id: bookid , isDeleted:false}).lean()
         if (!book) {
             return res.status(404).send({ status: false, message: "No such book" })
         }
@@ -114,17 +93,16 @@ const updateReview = async function (req, res) {
         if (!isValid(info.rating)) {
             return res.status(400).send({ status: false, message: "please enter rating details" })
         }
-        if(info.rating <= 5 && info.rating >= 1){
-
-         return res.status(400).send({ status: false, message: "you can not give rating greater than 5 or less than 1" })
-        }
+        if (!(/[+]?([0-4]*\.[0-9]+|[0-5])/).test(info.rating))
+        return res.status(400).send({ status: false, msg: 'rating is needed between 1 to 5' })
         // we have to write regex for rating after validating rating.
         if (!isValid(info.reviewedBy)) {
             return res.status(400).send({ status: false, message: "please enter reviewedBy details" })
         }
 
         let update = await reviewModel.findOneAndUpdate({ _id: review_id, }, { $set: { review: info.review, rating: info.rating, reviewedBy: info.reviewedBy } }, { new: true })
-        return res.status(200).send({ status: true, message: "Updated successfully", data: update })
+        book.reviewsData=update
+        return res.status(200).send({ status: true, message: "Updated successfully", data: book })
     }
     catch (err) {
         console.log(err.message)
