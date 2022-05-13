@@ -85,7 +85,7 @@ const getBooks = async function (req, res) {
         }
         }
 
-        const books = await bookModel.find({ $and: [queryParams, { isDeleted: false }] }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 }).collation({ locale: "en" }).sort({ title: 1 })
+        const books = await bookModel.find({ $and: [queryParams, { isDeleted: false }] }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 }).sort({ title: 1 })
 
         if (books.length == 0) return res.status(404).send({ status: false, message: "No books Available." })
         return res.status(200).send({ status: true, message: 'list of books which is is deleted false', count: books.length, data: books });
