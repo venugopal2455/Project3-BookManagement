@@ -1,5 +1,4 @@
 const bookModel = require("../models/bookModel")
-//const userModel = require("../models/userModel")
 const reviewModel = require("../models/reviewModel")
 const mongoose = require('mongoose')
 
@@ -49,10 +48,7 @@ const bookReview = async function (req, res) {
         //checking for review
         if (!isValid(review))
             return res.status(400).send({ status: false, msg: 'review is required' })
-        //creation of review
-        // if (!isValid(reviewedBy)) {
-        //     return res.status(400).send({ status: false, msg: "name of reviewer is required" })
-        // }
+       
         let reviewCount = await bookModel.findOneAndUpdate({ _id: paramBookId }, { $inc: { reviews: 1 } }, { new: true }).lean()
         details.reviewedAt = new Date()
         let Review = await reviewModel.create(details)
@@ -109,22 +105,11 @@ const updateReview = async function (req, res) {
         }
     
 
-        // /if (!isValid(info.rating)) {
-        //     return res.status(400).send({ status: false, message: "please enter rating details" })
-        // // }
-
-        //======regex=/[+]?([0-4]*\.[0-9]+|[0-5])/====for rting===================
-        
             if (!isValid(info.rating)) {
                 return res.status(400).send({ status: false, message: "please enter rating details" })}
                 if (!(info.rating >= 1 && info.rating <= 5)) {
                    return  res.status(400).send({ status: true, mag: "rating should be between 1 and 5" })
                 }
-
-        // if (!(/^([1-5]|1[5])$/).test(info.rating)){
-        //     return res.status(400).send({ status: false, msg: 'rating is needed between 1 to 5' })
-        // }
-        // we have to write regex for rating after validating rating.
 
         let update = await reviewModel.findOneAndUpdate({ _id: review_id, }, { $set: { review: info.review, rating: info.rating, reviewedBy: info.reviewedBy } }, { new: true }).select({_id:1,bookId:1,reviewedBy:1,reviewedAt:1,rating:1,review:1})
         book.reviewsData = update

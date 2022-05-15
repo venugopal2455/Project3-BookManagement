@@ -18,7 +18,7 @@ const isValidObjectId = function (objectId) {
     return mongoose.Types.ObjectId.isValid(objectId)
 }
 
-//===================== Book creation =========================================
+//===================== Book creation ==================================================
 
 
 const bookCreation = async function (req, res) {
@@ -127,7 +127,7 @@ const getBooks = async function (req, res) {
 }
 
 
-//=========================  Get Books By Id ================================
+//=========================  Get Books By Id ===================================================
 
 
 
@@ -155,7 +155,7 @@ const getBookById = async function (req, res) {
 
 
 
-//========================  Update Books  =========================================
+//========================  Update Books  =======================================================
 
 const updateBooks = async function (req, res) {
 
@@ -212,6 +212,7 @@ const updateBooks = async function (req, res) {
 
 const deleteBook = async function (req, res) {
     try {
+
         const bookId = req.params.bookId;
         if (!isValidObjectId(bookId)) {
             return res.status(400).send({ status: false, message: "book id is invalid" })
