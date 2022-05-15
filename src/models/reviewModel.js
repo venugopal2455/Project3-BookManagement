@@ -11,7 +11,7 @@ const reviewSchema = new mongoose.Schema({
     },
     reviewedBy: {
         type:String, 
-        required:true,
+        required:'reviewedBy name is required',
         default: 'Guest',
         trim:true
        
@@ -19,7 +19,8 @@ const reviewSchema = new mongoose.Schema({
     reviewedAt:
     {
         type:Date,
-        default:new Date(),
+        required:'reviewed at is required',
+      
         // required:true,
         
     },
@@ -28,7 +29,6 @@ const reviewSchema = new mongoose.Schema({
         min:1,
         max:5,
         required:true,
-        trim:true
 
     },
     review:{

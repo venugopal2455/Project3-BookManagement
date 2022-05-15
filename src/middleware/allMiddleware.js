@@ -68,6 +68,5 @@ const authorization2 = async function(req,res,next){
     }
 }
 
-module.exports.authentication = authentication;
-module.exports.authorization1 = authorization1;
-module.exports.authorization2 = authorization2;
+module.exports = {authentication,authorization1,authorization2}
+

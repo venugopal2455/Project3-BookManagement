@@ -81,7 +81,7 @@ const createUser = async function (req, res) {
     }
 }
 
-//=================================================loginUser=========================================
+//================================================= loginUser =========================================
 
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0

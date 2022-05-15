@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const ObjectId = mongoose.Schema.Types.ObjectId
+ //const moment = require("moment")
 
 const bookSchema = new mongoose.Schema({
     title: {
@@ -44,10 +45,9 @@ const bookSchema = new mongoose.Schema({
        default: false
     },
   releasedAt: {
-      type:Date,
+      type:String,
     required:true,
-    
-    // default:new Date()
+   //string
 }
 },{timestamps:true});
 
