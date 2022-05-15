@@ -2,7 +2,6 @@ const bookModel = require("../models/bookModel")
 const userModel = require("../models/userModel")
 const reviewModel = require("../models/reviewModel")
 const mongoose = require('mongoose')
-// const moment = require("moment")
 
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
@@ -104,7 +103,6 @@ const getBooks = async function (req, res) {
                 return res.status(400).send({ status: false, msg: "This userid is not valid please check once while your entering" })
             }
         }
-
         const books = await bookModel.find({ $and: [queryParams, { isDeleted: false }] }).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 })
         if (books.length > 0) {
             books.sort(function (a, b) {
@@ -122,7 +120,6 @@ const getBooks = async function (req, res) {
         else {
             return res.status(404).send({ status: false, message: "No books Available." })
         }
-
     }
     catch (error) {
         res.status(500).send({ status: false, message: error.message });
@@ -168,18 +165,11 @@ const updateBooks = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please Provide Valid Input Details" });
         }
         const bookId = req.params.bookId
-
-        // / if (!(isValid(bookId))) { return res.status(400).send({ status: false, message: "bookId is required" }) }
         if (!isValidObjectId(bookId)) { return res.status(400).send({ status: false, message: "Valid bookId is required" }) }
-
-        //if (!isValid(data.title)) { return res.status(400).send({ status: false, message: 'Book Title is required' }) }
 
         const newTitle = await bookModel.findOne({ title: data.title });
         if (newTitle) { return res.status(400).send({ status: false, message: "Title  already registered" }) }
 
-        //if (!isValid(data.excerpt)) { return res.status(400).send({ status: false, message: 'Excerpt is required' }) }
-
-        // if (!isValid(data.ISBN)) { return res.status(400).send({ status: false, message: "ISBN is required" }) }
         if(data.ISBN){
         if (!(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(data.ISBN))) {
             return res.status(400).send({ status: false, ERROR: "ISBN is not valid" })
@@ -189,8 +179,6 @@ const updateBooks = async function (req, res) {
         if (newISBN) { return res.status(400).send({ status: false, message: "ISBN  already registered" }) }
     }
 
-
-        // if (!isValid(data.releasedAt)) { return res.status(400).send({ status: false, message: 'enter the released date of the book' }) }
         if(data.releasedAt){
         if (!(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(data.releasedAt))) {
             return res.status(400).send({ status: false, message: "Data should be in yyyy-mm-dd format" })

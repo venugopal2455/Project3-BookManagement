@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
-//const moment=require('moment')
+
 
 const reviewSchema = new mongoose.Schema({
 
@@ -11,7 +11,7 @@ const reviewSchema = new mongoose.Schema({
     },
     reviewedBy: {
         type:String, 
-        required:'reviewedBy name is required',
+        required:true,
         default: 'Guest',
         trim:true
        
@@ -21,7 +21,6 @@ const reviewSchema = new mongoose.Schema({
         type:Date,
         required:'reviewed at is required',
       
-        // required:true,
         
     },
     rating:{

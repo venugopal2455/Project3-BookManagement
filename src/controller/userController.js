@@ -112,8 +112,7 @@ const loginUser = async function (req, res) {
             res.status(400).send({ status: false, message: "password is required" })
             return
         }
-        // const valid = password.length;
-        // if (!(valid >= 8 && valid <= 15)) return res.status(400).send({ status: false, message: "Please Enter valid Password" });
+      
         if (!regex1.test(password)) {
             res.status(400).send({ status: false, message: "password is invalid" })
             return
