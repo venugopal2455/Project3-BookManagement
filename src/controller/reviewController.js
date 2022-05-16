@@ -52,7 +52,7 @@ const bookReview = async function (req, res) {
 }
 
 
-    if("rating" in details){
+
 
         if (!isValid(rating)) return res.status(400).send({ status: false, msg: 'rating needed' })
         if (!(rating >= 1 && rating <= 5)) {
@@ -60,20 +60,17 @@ const bookReview = async function (req, res) {
         }
     requestBody["rating"] = rating
 
-    }
+    
 
         //checking for review
-        if("review" in details){
+      
         if (!isValid(review)){
             return res.status(400).send({ status: false, msg: 'review is required' })
         }
 
      requestBody["review"] = review
-
-    }
-    if("bookId" in details){
-       requestBody["bookId"]= bookId
-    }
+     requestBody["bookId"]= bookId
+    
 
         let reviewCount = await bookModel.findOneAndUpdate({ _id: paramBookId }, { $inc: { reviews: 1 } }, { new: true }).lean()
         requestBody.reviewedAt = new Date()
@@ -150,8 +147,6 @@ const updateReview = async function (req, res) {
             requestBody["rating"] = rating
 
         }
-
-
 
         let update = await reviewModel.findOneAndUpdate({ _id: review_id, }, { $set: requestBody }, { new: true }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
         book.reviewsData = update
