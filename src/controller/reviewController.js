@@ -33,7 +33,7 @@ const bookReview = async function (req, res) {
         if (!isValidRequestBody(details))
             return res.status(400).send({ status: false, msg: "Please fill body details" })
         //body consists of which is required
-        let { rating, review, reviewedBy } = details
+        let { rating, review } = details
         details.bookId = paramBookId
         //validation start
         if (!isValid(paramBookId)) return res.status(400).send({ status: false, msg: "bookId is Required" })
@@ -98,7 +98,7 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, message: "please enter reviewedBy details" })
         
     }
-        // }
+       
     
          if (!isValid(info.review)) {
             return res.status(400).send({ status: false, message: "please enter review details" })

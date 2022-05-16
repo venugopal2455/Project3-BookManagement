@@ -87,13 +87,14 @@ const bookCreation = async function (req, res) {
 
 
 
-//=============================== Get Books =====================================
+//=============================== Get Books =====================================================
 
 
 
 const getBooks = async function (req, res) {
     try {
         const queryParams = req.query
+        console.log(queryParams)
         let bookExist = await bookModel.find({ isDeleted: false })
         if (bookExist.length == 0) {
             return res.status(404).send({ status: false, message: "there is no book with isdeleted:false" })
@@ -115,7 +116,7 @@ const getBooks = async function (req, res) {
                 return 0;
 
             })
-            return res.status(200).send({ status: true, message: 'list of books which is is deleted false', count: books.length, data: books });
+            return res.status(200).send({ status: true, message: 'list of books', count: books.length, data: books });
         }
         else {
             return res.status(404).send({ status: false, message: "No books Available." })
@@ -137,7 +138,7 @@ const getBookById = async function (req, res) {
         if (!isValidObjectId(bookid)) {
             return res.status(400).send({ status: false, message: "bookid is not a valid objectId" })
         }
-
+    
         let book = await bookModel.findOne({ _id: bookid, isDeleted: false }).lean()
         if (!book) {
             return res.status(404).send({ status: false, message: "no such book is available " })
@@ -161,15 +162,18 @@ const updateBooks = async function (req, res) {
 
     try {
         const data = req.body
-        if (!isValid(data)) {
+        if (!isValidRequestBody(data)) {
             return res.status(400).send({ status: false, message: "Please Provide Valid Input Details" });
         }
         const bookId = req.params.bookId
         if (!isValidObjectId(bookId)) { return res.status(400).send({ status: false, message: "Valid bookId is required" }) }
-
+         if(!data.title){
+             if(!isValid(data.title)){
+                return res.status(400).send({ status: false, message: "give title in the request" })
+             }
         const newTitle = await bookModel.findOne({ title: data.title });
         if (newTitle) { return res.status(400).send({ status: false, message: "Title  already registered" }) }
-
+         }
         if(data.ISBN){
         if (!(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(data.ISBN))) {
             return res.status(400).send({ status: false, ERROR: "ISBN is not valid" })

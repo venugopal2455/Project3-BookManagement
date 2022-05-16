@@ -124,6 +124,7 @@ const loginUser = async function (req, res) {
             return
         }
 
+        
         const token = jwt.sign({
             userId: user._id,
             iat: Math.floor(Date.now() / 1000),
