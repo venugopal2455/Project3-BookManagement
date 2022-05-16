@@ -28,30 +28,56 @@ const bookReview = async function (req, res) {
     try {
         let paramBookId = req.params.bookId
         let details = req.body
-
+        details.bookId = paramBookId
         // nothing from body it returns this
         if (!isValidRequestBody(details))
             return res.status(400).send({ status: false, msg: "Please fill body details" })
         //body consists of which is required
-        let { rating, review } = details
-        details.bookId = paramBookId
+        let { rating, review, reviewedBy, bookId} = details
         //validation start
-        if (!isValid(paramBookId)) return res.status(400).send({ status: false, msg: "bookId is Required" })
-        if (!isValidObjectId(paramBookId)) return res.status(400).send({ status: false, msg: "Please enter valid BookId" })
+     let requestBody = {};
+        if (!isValidObjectId(paramBookId)) {
+        return res.status(400).send({ status: false, msg: "Please enter valid BookId" })
+        }
         let BookId = await bookModel.findById(paramBookId)
-        if (!BookId) return res.status(404).send({ status: false, msg: "Book not foundt" })
-        //checking for rating
+        if (!BookId) {
+        return res.status(404).send({ status: false, msg: "Book not foundt" })
+        }
+    if("reviewedBy" in details){
+   if(!isValid(reviewedBy)){
+    return res.status(400).send({ status: false, msg: 'reviewedBY is required' })
+
+   }
+   requestBody["reviewedBy"]= reviewedBy
+}
+
+
+    if("rating" in details){
+
         if (!isValid(rating)) return res.status(400).send({ status: false, msg: 'rating needed' })
         if (!(rating >= 1 && rating <= 5)) {
-            return  res.status(400).send({ status: true, mag: "rating should be between 1 and 5" })
-         }
+            return res.status(400).send({ status: true, mag: "rating should be between 1 and 5" })
+        }
+    requestBody["rating"] = rating
+
+    }
+
         //checking for review
-        if (!isValid(review))
+        if("review" in details){
+        if (!isValid(review)){
             return res.status(400).send({ status: false, msg: 'review is required' })
-       
+        }
+
+     requestBody["review"] = review
+
+    }
+    if("bookId" in details){
+       requestBody["bookId"]= bookId
+    }
+
         let reviewCount = await bookModel.findOneAndUpdate({ _id: paramBookId }, { $inc: { reviews: 1 } }, { new: true }).lean()
-        details.reviewedAt = new Date()
-        let Review = await reviewModel.create(details)
+        requestBody.reviewedAt = new Date()
+        let Review = await reviewModel.create(requestBody)
         let reviewCreation = await reviewModel.findOne({ _id: Review._id }).select({ _v: 0, createdAt: 0, updatedAt: 0, isDeleted: 0 })
         reviewCount.reviewsData = reviewCreation
         return res.status(201).send({ status: true, message: "reviewcreated successfully", data: reviewCount })
@@ -90,28 +116,44 @@ const updateReview = async function (req, res) {
         }
 
         let info = req.body
+        const { reviewedBy, review, rating } = info
+
+        let requestBody = {};
+
         if (!isValidRequestBody(info)) {
             return res.status(400).send({ status: false, message: "please enter details" })
         }
-        
-        if (!isValid(info.reviewedBy)) {
-            return res.status(400).send({ status: false, message: "please enter reviewedBy details" })
-        
-    }
-       
-    
-         if (!isValid(info.review)) {
-            return res.status(400).send({ status: false, message: "please enter review details" })
+        if ("reviewedBy" in info) {
+            if (!isValid(reviewedBy)) {
+                return res.status(400).send({ status: false, message: "please enter reviewedBy details" })
+
         }
-    
+            requestBody["reviewedBy"] = reviewedBy
+        }
 
-            if (!isValid(info.rating)) {
-                return res.status(400).send({ status: false, message: "please enter rating details" })}
-                if (!(info.rating >= 1 && info.rating <= 5)) {
-                   return  res.status(400).send({ status: true, mag: "rating should be between 1 and 5" })
-                }
+        if ("review" in info) {
 
-        let update = await reviewModel.findOneAndUpdate({ _id: review_id, }, { $set: { review: info.review, rating: info.rating, reviewedBy: info.reviewedBy } }, { new: true }).select({_id:1,bookId:1,reviewedBy:1,reviewedAt:1,rating:1,review:1})
+            if (!isValid(review)) {
+                return res.status(400).send({ status: false, message: "please enter review details" })
+            }
+            requestBody["review"] = review
+        }
+        if ("rating" in info) {
+
+            if (!isValid(rating)) {
+                return res.status(400).send({ status: false, message: "please enter rating details" })
+            }
+            if (!(rating >= 1 && rating <= 5)) {
+                return res.status(400).send({ status: true, mag: "rating should be between 1 and 5" })
+            }
+
+            requestBody["rating"] = rating
+
+        }
+
+
+
+        let update = await reviewModel.findOneAndUpdate({ _id: review_id, }, { $set: requestBody }, { new: true }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
         book.reviewsData = update
         return res.status(200).send({ status: true, message: "Updated successfully", data: book })
     }

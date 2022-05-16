@@ -138,7 +138,7 @@ const getBookById = async function (req, res) {
         if (!isValidObjectId(bookid)) {
             return res.status(400).send({ status: false, message: "bookid is not a valid objectId" })
         }
-    
+
         let book = await bookModel.findOne({ _id: bookid, isDeleted: false }).lean()
         if (!book) {
             return res.status(404).send({ status: false, message: "no such book is available " })
@@ -167,27 +167,65 @@ const updateBooks = async function (req, res) {
         }
         const bookId = req.params.bookId
         if (!isValidObjectId(bookId)) { return res.status(400).send({ status: false, message: "Valid bookId is required" }) }
-         if(!data.title){
-             if(!isValid(data.title)){
-                return res.status(400).send({ status: false, message: "give title in the request" })
-             }
-        const newTitle = await bookModel.findOne({ title: data.title });
-        if (newTitle) { return res.status(400).send({ status: false, message: "Title  already registered" }) }
-         }
-        if(data.ISBN){
-        if (!(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(data.ISBN))) {
-            return res.status(400).send({ status: false, ERROR: "ISBN is not valid" })
+
+        const { title, excerpt, releasedAt, ISBN } = data
+        let requestBody = {};
+        if ("title" in data) {
+
+            if (!isValid(title)) {
+                return res.status(400).send({ status: false, message: "give title in the request body " })
+            }
+
+            const newTitle = await bookModel.findOne({ title: data.title });
+            if (newTitle) {
+                return res.status(400).send({ status: false, message: "Title  already registered" })
+            }
+
+            requestBody["title"] = title
+
+        }
+        if ("excerpt" in data) {
+            if (!isValid(excerpt)) {
+                return res.status(400).send({ status: false, message: "give excerpt in the request body" })
+            }
+
+            requestBody["excerpt"] = excerpt
+
         }
 
-        const newISBN = await bookModel.findOne({ ISBN: data.ISBN });
-        if (newISBN) { return res.status(400).send({ status: false, message: "ISBN  already registered" }) }
-    }
+        if ("releasedAt" in data) {
 
-        if(data.releasedAt){
-        if (!(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(data.releasedAt))) {
-            return res.status(400).send({ status: false, message: "Data should be in yyyy-mm-dd format" })
+            if (!isValid(releasedAt)) {
+                return res.status(400).send({ status: false, message: "give releasedAt in the request body" })
+            }
+            if (!(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(data.releasedAt))) {
+                return res.status(400).send({ status: false, message: "Data should be in yyyy-mm-dd format" })
+            }
+
+            requestBody["releasedAt"] = releasedAt
+
         }
-    }
+
+
+        if ("ISBN" in data) {
+
+            if (!isValid(ISBN)) {
+                return res.status(400).send({ status: false, message: "give ISBN in the request body" })
+            }
+
+            if (!(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(data.ISBN))) {
+                return res.status(400).send({ status: false, message: "ISBN is not valid" })
+            }
+            const newISBN = await bookModel.findOne({ ISBN: data.ISBN });
+            if (newISBN) {
+                return res.status(400).send({ status: false, message: "ISBN  already registered" })
+
+            }
+
+            requestBody["ISBN"]= ISBN
+
+        }
+
         let bookDetails = await bookModel.findOne({ _id: bookId })
 
         if (!bookDetails) {
@@ -195,7 +233,7 @@ const updateBooks = async function (req, res) {
         }
 
         let updatedBook = await bookModel.findOneAndUpdate({ _id: bookId },
-            { $set: { title: data.title, excerpt: data.excerpt, releasedAt: data.releasedAt, ISBN: data.ISBN } },
+            { $set: requestBody},
             { new: true })
 
         return res.status(200).send({ Status: true, data: updatedBook })
