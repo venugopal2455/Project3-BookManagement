@@ -2,7 +2,7 @@ const bookModel = require("../models/bookModel")
 const userModel = require("../models/userModel")
 const reviewModel = require("../models/reviewModel")
 const mongoose = require('mongoose')
-
+const uploadFiles = require("../aws/aws.js")
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
 }
@@ -24,18 +24,19 @@ const isValidObjectId = function (objectId) {
 const bookCreation = async function (req, res) {
     try {
         let details = req.body
+        const requesFiles = req.files
         //nothing from body comes this execute
         if (!isValidRequestBody(details))
             return res.status(400).send({ status: false, msg: "Please fill book details" })
 
         //details to be in body 
-        let { title, bookCover,excerpt, userId, ISBN, category, subcategory, releasedAt } = details
+        let { title,excerpt, userId, ISBN, category, subcategory, releasedAt } = details
 
         //validation start
         if (!isValid(title))
             return res.status(400).send({ status: false, msg: "TItle Name is Required" })
-            if (!isValid(bookCover))
-            return res.status(400).send({ status: false, msg: "book cover Name is Required" })
+            // if (!isValid(bookCover))
+            // return res.status(400).send({ status: false, msg: "book cover Name is Required" })
         //Check for uniquetitle in bookmodel
         let uniqueTitle = await bookModel.findOne({ title })
         if (uniqueTitle)
@@ -78,6 +79,9 @@ const bookCreation = async function (req, res) {
         if (!(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/.test(releasedAt))) {
             return res.status(400).send({ status: false, message: "Data should be in yyyy-mm-dd format" })
         }
+        let uploadedFilesURL = await uploadFiles.uploadFiles(requesFiles[0]);
+        details.bookCover = uploadedFilesURL.Location
+        console.log(uploadedFilesURL)
         let bookCreation = await bookModel.create(details)
         return res.status(201).send({ status: true, message: "bookcreated successfully", data: bookCreation })
     }
