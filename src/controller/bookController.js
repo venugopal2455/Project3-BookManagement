@@ -29,11 +29,13 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Please fill book details" })
 
         //details to be in body 
-        let { title, excerpt, userId, ISBN, category, subcategory, releasedAt } = details
+        let { title, bookCover,excerpt, userId, ISBN, category, subcategory, releasedAt } = details
 
         //validation start
         if (!isValid(title))
             return res.status(400).send({ status: false, msg: "TItle Name is Required" })
+            if (!isValid(bookCover))
+            return res.status(400).send({ status: false, msg: "book cover Name is Required" })
         //Check for uniquetitle in bookmodel
         let uniqueTitle = await bookModel.findOne({ title })
         if (uniqueTitle)
