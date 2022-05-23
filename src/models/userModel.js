@@ -20,20 +20,8 @@ const userSchema = new mongoose.Schema(
       match: [/^[6-9]\d{9}$/, "please fill a valid mobile Number"],
       unique: true
     },
-    email: {
-      type: String,
-      required: true,
-      match: [ /^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/, 'Please fill a valid email address'],
-      unique: true,
-      
-    },
-    password: {
-      type: String,
-      required: true,
-      match:[/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/,'Please enter valid Password'],
-      minlen:8,
-      maxlen:15
-    },
+    email:{type:String,required:true,match: /.+\@.+\..+/,unique:true},
+    password:{type:String,required:true,unique:true,minlength:8,maxlength:20},
     address: {
       street: {
         type: String
